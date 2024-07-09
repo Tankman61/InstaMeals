@@ -28,7 +28,6 @@ class InstaMealsApp(ctk.CTk):
         # About menu directly opens the about page
         menu_bar.add_command(label="About", command=self.show_welcome_and_about)
         menu_bar.add_command(label="Generate", command=self.take_picture)
-        menu_bar.add_command(label="Daniel's test", command=lambda: self.generate_meal(["apple", "oatmeal"]))
 
         self.config(menu=menu_bar)
 
@@ -71,17 +70,6 @@ Version: 1.0
 
         about_label = ctk.CTkLabel(self.content_frame, text=about_text, font=("Roboto", 14), justify="left", text_color="#FFFFFF")
         about_label.pack(pady=10)
-
-
-        
-    def generate_meal(self, ingredients):
-        textbox = ctk.CTkTextbox(master=self, width=600, height=500, font=("Arial",16))
-        textbox.grid(row=0, column=0, padx=20, pady=20)  # Use grid for layout
-        response = gemini.prompt("make meal with" + " ".join(ingredients))
-        print(response)
-        textbox.insert("0.0", response)
-
-
 
     def take_picture(self):
         if self.cap is None:
