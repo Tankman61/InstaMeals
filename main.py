@@ -12,7 +12,7 @@ class InstaMealsApp(ctk.CTk):
         super().__init__()
 
         self.title("InstaMeals")
-        self.geometry("1920x1080")
+        self.geometry("1280x720")
 
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
@@ -22,6 +22,8 @@ class InstaMealsApp(ctk.CTk):
 
         self.camera_frame = None
         self.cap = None
+
+        self.textbox = None
 
     def create_menus(self):
         menu_bar = Menu(self)
@@ -57,7 +59,7 @@ class InstaMealsApp(ctk.CTk):
         welcome_label.pack(expand=True)
 
         about_title = ctk.CTkLabel(self.content_frame, text="About InstaMeals", font=("Black Han Sans", 24, "bold"), text_color="#F8C91B")
-        about_title.pack(pady=(20, 20))
+        about_title.pack(pady=(20, 10))
 
         about_text = """InstaMeals is a revolutionary app that helps you create delicious meals based on the ingredients you have.
 
@@ -76,13 +78,11 @@ Version: 1.0
 
         
     def generate_meal(self, ingredients):
-        textbox = ctk.CTkTextbox(master=self, width=600, height=500, font=("Arial",16))
-        textbox.grid(row=0, column=0, padx=20, pady=20)  # Use grid for layout
+        for widget in self.content_frame.winfo_children():
+            widget.destroy()
         response = gemini.prompt("make meal with" + " ".join(ingredients))
-        print(response)
-        textbox.insert("0.0", response)
-
-
+        meal_label = ctk.CTkLabel(self.content_frame, text=response, font=("Roboto", 14), justify="left", text_color="#FFFFFF")
+        meal_label.pack(pady=10)
 
     def take_picture(self):
         if self.cap is None:
