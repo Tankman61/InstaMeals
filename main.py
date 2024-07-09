@@ -3,9 +3,8 @@ from tkinter import Menu, messagebox
 import cv2
 from PIL import Image, ImageTk
 
-ctk.set_appearance_mode("dark")  # Set the theme to dark mode
-ctk.set_default_color_theme("blue")  # Set the color theme
-
+# Set the appearance mode to dark
+ctk.set_appearance_mode("dark")
 
 class InstaMealsApp(ctk.CTk):
     def __init__(self):
@@ -27,45 +26,37 @@ class InstaMealsApp(ctk.CTk):
         menu_bar = Menu(self)
 
         # About menu directly opens the about page
-        menu_bar.add_command(label="About", command=self.show_about)
+        menu_bar.add_command(label="About", command=self.show_welcome_and_about)
         menu_bar.add_command(label="Generate", command=self.take_picture)
-
+        menu_bar.add_command(label="Daniel's test", command=lambda: self.generate_meal(["apple", "oatmeal"]))
 
         self.config(menu=menu_bar)
 
     def create_main_frame(self):
-        self.main_frame = ctk.CTkFrame(self)
+        self.main_frame = ctk.CTkFrame(self, fg_color="black")
         self.main_frame.grid(row=0, column=0, sticky="nsew", padx=20, pady=20)
 
         self.main_frame.grid_columnconfigure(0, weight=1)
         self.main_frame.grid_rowconfigure(1, weight=1)
-
-        self.title_label = ctk.CTkLabel(self.main_frame, text="InstaMeals", font=("Roboto", 28, "bold"))
-        self.title_label.grid(row=0, column=0, pady=(0, 20))
-
-        self.content_frame = ctk.CTkFrame(self.main_frame)
+        self.content_frame = ctk.CTkFrame(self.main_frame, fg_color="black")
         self.content_frame.grid(row=1, column=0, sticky="nsew")
+        self.show_welcome_and_about()
 
-        self.show_welcome_message()
-
-    def show_welcome_message(self):
+    def show_welcome_and_about(self):
         for widget in self.content_frame.winfo_children():
             widget.destroy()
-
+        image_path = "InstaMeals.png"  # Replace with your image path
+        image = Image.open(image_path)
+        photo = ImageTk.PhotoImage(image)
+        title_label = ctk.CTkLabel(self.content_frame, image=photo, text="")
+        title_label.pack(expand=True, fill="both")
         welcome_label = ctk.CTkLabel(self.content_frame,
                                      text="Welcome to InstaMeals!\nTake a picture of your ingredients to get started.",
-                                     font=("Roboto", 16))
+                                     font=("Roboto", 16), text_color="#FFFFFF")
         welcome_label.pack(expand=True)
 
-    def show_about(self):
-        for widget in self.content_frame.winfo_children():
-            widget.destroy()
-
-        about_frame = ctk.CTkFrame(self.content_frame)
-        about_frame.pack(fill="both", expand=True, padx=20, pady=20)
-
-        about_title = ctk.CTkLabel(about_frame, text="About InstaMeals", font=("Roboto", 24, "bold"))
-        about_title.pack(pady=(0, 20))
+        about_title = ctk.CTkLabel(self.content_frame, text="About InstaMeals", font=("Black Han Sans", 24, "bold"), text_color="#F8C91B")
+        about_title.pack(pady=(20, 20))
 
         about_text = """InstaMeals is a revolutionary app that helps you create delicious meals based on the ingredients you have.
 
@@ -78,11 +69,19 @@ Key Features:
 Version: 1.0
 © 2024 InstaMeals Inc."""
 
-        about_label = ctk.CTkLabel(about_frame, text=about_text, font=("Roboto", 14), justify="left")
+        about_label = ctk.CTkLabel(self.content_frame, text=about_text, font=("Roboto", 14), justify="left", text_color="#FFFFFF")
         about_label.pack(pady=10)
 
-        ok_button = ctk.CTkButton(about_frame, text="Back", command=self.show_welcome_message)
-        ok_button.pack(pady=(20, 0))
+
+        
+    def generate_meal(self, ingredients):
+        textbox = ctk.CTkTextbox(master=self, width=600, height=500, font=("Arial",16))
+        textbox.grid(row=0, column=0, padx=20, pady=20)  # Use grid for layout
+        response = gemini.prompt("make meal with" + " ".join(ingredients))
+        print(response)
+        textbox.insert("0.0", response)
+
+
 
     def take_picture(self):
         if self.cap is None:
@@ -101,7 +100,7 @@ Version: 1.0
 
         self.update_camera()
 
-        capture_button = ctk.CTkButton(self.content_frame, text="Capture", command=self.capture_image)
+        capture_button = ctk.CTkButton(self.content_frame, text="Capture", command=self.capture_image, fg_color="#F8C91B", hover_color="#F8C91B")
         capture_button.pack(pady=(0, 20))
 
     def update_camera(self):
