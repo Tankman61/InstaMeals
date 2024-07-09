@@ -101,7 +101,8 @@ Version: 1.0
 
         self.update_camera()
 
-        capture_button = ctk.CTkButton(self.content_frame, text="Capture", command=self.capture_image, fg_color="#F8C91B", hover_color="#F8C91B")
+        capture_button = ctk.CTkButton(self.content_frame, text="Capture", command=self.capture_image,
+                                       fg_color="#F8C91B", hover_color="#F8C91B", text_color="#000000")
         capture_button.pack(pady=(0, 20))
 
     def update_camera(self):
@@ -111,8 +112,17 @@ Version: 1.0
             img = Image.fromarray(cv2image)
             img = img.resize((800, 600), Image.LANCZOS)
             imgtk = ImageTk.PhotoImage(image=img)
-            self.camera_frame.imgtk = imgtk
+
+            # Ensure self.camera_frame is recreated if it was destroyed
+            if self.camera_frame is None:
+                self.camera_frame = ctk.CTkLabel(self.content_frame, text="")
+                self.camera_frame.pack(expand=True, fill="both", padx=20, pady=20)
+
+            # Assign image and update the label
             self.camera_frame.configure(image=imgtk)
+            self.camera_frame.imgtk = imgtk
+
+            # Schedule the next update
             self.after(10, self.update_camera)
 
     def capture_image(self):
