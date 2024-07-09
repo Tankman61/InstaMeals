@@ -76,13 +76,34 @@ Version: 1.0
         about_label.pack(pady=10)
 
 
-        
+    def wrap_text(self, text, width):
+        """
+        Wraps the text to fit within the specified width.
+        """
+        import textwrap
+        return "\n".join(textwrap.wrap(text, width))
+
+
     def generate_meal(self, ingredients):
         for widget in self.content_frame.winfo_children():
             widget.destroy()
+
+        self.input_field = ctk.CTkEntry(master=self, width=300)
+        self.input_field.grid(row=0, column=0, padx=20, pady=10)
+
+        self.submit_button = ctk.CTkButton(master=self, text="Generate Meal", command=self.get_input_and_generate_meal)
+        self.submit_button.grid(row=1, column=0, padx=20, pady=0)
+
+
+    def get_input_and_generate_meal(self):
+        for widget in self.content_frame.winfo_children():
+            widget.destroy()
+        ingredients = self.input_field.get().split(",")
         response = gemini.prompt("make meal with" + " ".join(ingredients))
+        response = self.wrap_text(response, width=150)
         meal_label = ctk.CTkLabel(self.content_frame, text=response, font=("Roboto", 14), justify="left", text_color="#FFFFFF")
         meal_label.pack(pady=10)
+
 
     def take_picture(self):
         if self.cap is None:
