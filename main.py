@@ -92,18 +92,44 @@ Version: 1.0
         self.input_field.grid(row=0, column=0, padx=20, pady=10)
 
         self.submit_button = ctk.CTkButton(master=self, text="Generate Meal", command=self.get_input_and_generate_meal)
-        self.submit_button.grid(row=1, column=0, padx=20, pady=0)
+        self.submit_button.grid(row=1, column=0, padx=20, pady=20)
 
 
     def get_input_and_generate_meal(self):
         for widget in self.content_frame.winfo_children():
             widget.destroy()
+
         ingredients = self.input_field.get().split(",")
         response = gemini.prompt("make meal with" + " ".join(ingredients))
-        response = self.wrap_text(response, width=150)
-        meal_label = ctk.CTkLabel(self.content_frame, text=response, font=("Roboto", 14), justify="left", text_color="#FFFFFF")
-        meal_label.pack(pady=10)
+        response = self.convert_markdown_to_plain_text(response)
+        self.textbox = ctk.CTkTextbox(master=self, width=400, height=200)
+        self.textbox.grid(row=0, column=0, padx=20, pady=20)
+        self.textbox.insert("0.0", response)
+        #meal_label = ctk.CTkLabel(self.content_frame, text=response, font=("Roboto", 14), justify="left", text_color="#FFFFFF")
+        #meal_label.pack(pady=10)
 
+
+    def convert_markdown_to_plain_text(self, markdown_text):
+        """
+        Converts basic markdown to plain text with some formatting.
+        """
+        import re
+
+        # Convert headers (e.g., ### Header)
+        markdown_text = re.sub(r'#+\s(.+)', r'\1\n', markdown_text)
+
+        # Convert bold text (e.g., **bold** or __bold__)
+        markdown_text = re.sub(r'\*\*(.+?)\*\*', r'\1', markdown_text)
+        markdown_text = re.sub(r'__(.+?)__', r'\1', markdown_text)
+
+        # Convert italic text (e.g., *italic* or _italic_)
+        markdown_text = re.sub(r'\*(.+?)\*', r'\1', markdown_text)
+        markdown_text = re.sub(r'_(.+?)_', r'\1', markdown_text)
+
+        # Convert links (e.g., [title](url))
+        markdown_text = re.sub(r'\[(.+?)\]\((.+?)\)', r'\1 (\2)', markdown_text)
+
+        return markdown_text
 
     def take_picture(self):
         if self.cap is None:
