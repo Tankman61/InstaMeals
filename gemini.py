@@ -5,4 +5,6 @@ model = genai.GenerativeModel('gemini-1.5-flash')
 
 def prompt(p):
     return model.generate_content(p + " short brief concise kind").text
-    
+
+a = "I want you to make "
+print(prompt("testsetesfsdfsdf"))
