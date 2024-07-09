@@ -7,4 +7,9 @@ def prompt(p):
     return model.generate_content(p + " short brief concise kind").text
 
 a = "I want you to make "
-print(prompt("testsetesfsdfsdf"))
+time_to_make = 0
+difficulty = 0
+cuisine_origin = ""
+contains_ingredients = []
+recipe_type = "" # dessert, appetizer, drink, etc. etc.
+print(prompt(""))
